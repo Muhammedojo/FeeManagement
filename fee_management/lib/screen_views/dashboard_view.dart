@@ -1,6 +1,7 @@
 import 'package:fee_management/screen_controllers/student_profile_controller.dart';
 import 'package:flutter/material.dart';
 
+import '../components/student_widget.dart';
 import '../screen_controllers/dashboard_controller.dart';
 import '../utils/mvc.dart';
 import '../utils/widget_wrapper.dart';
@@ -32,35 +33,28 @@ class DashboardView extends StatelessView<Dashboard, DashboardController> {
   }
 
   Widget _body(BuildContext context) {
-    return  ListView.builder(
-        itemCount: state.students.length,
-        itemBuilder: (context, index) {
-          final student = state.students[index];
-          final feeStructure = state.feeStructures[student.grade]!;
-          
-          return Card(
-            margin: const EdgeInsets.all(8),
-            child: ListTile(
-              title: Text(student.name),
-              subtitle: Text(student.grade),
-              trailing: const Icon(Icons.chevron_right),
-              onTap: () {
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) 
-                    => StudentProfile(
-                      student: student,
-                      feeStructure: feeStructure,
-                    ),
-                  ),
-                );
-              },
-            ),
-          );
-        },
-      );
-    
-  }
+    return ListView.builder(
+      itemCount: state.students.length,
+      itemBuilder: (context, index) {
+        final student = state.students[index];
+        final feeStructure = state.feeStructures[student.grade]!;
 
+        return InkWell(
+          onTap: () {
+                     Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context)
+                  => StudentProfile(
+                    student: student,
+                    feeStructure: feeStructure,
+                  ),
+                ),
+              );
+          },
+          child: StudentCard(student: student, feeStructure: feeStructure));
+  
+      },
+    );
+  }
 }

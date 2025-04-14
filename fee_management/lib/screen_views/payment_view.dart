@@ -58,8 +58,13 @@ class PaymentView extends StatelessView<Payments, PaymentController> {
                 if (value == null || value.isEmpty) {
                   return 'Please enter amount';
                 }
-                if (double.tryParse(value) == null) {
+                final amount = double.tryParse(value);
+
+                if (amount == null) {
                   return 'Please enter valid amount';
+                }
+                if (amount <= 0) {
+                  return 'Amount must be positive';
                 }
                 return null;
               },
@@ -71,7 +76,9 @@ class PaymentView extends StatelessView<Payments, PaymentController> {
               title: const Text('This is an installment payment'),
               value: state.isInstallment,
               onChanged: (value) {
-             state.setInstallment(value!);
+                if (value != null) {
+                  state.setInstallment(value);
+                }
               },
             ),
 
@@ -91,7 +98,7 @@ class PaymentView extends StatelessView<Payments, PaymentController> {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: submitPayment(context),
+                onPressed: () => submitPayment(context),
                 child: const Text('Submit Payment'),
               ),
             ),
@@ -101,20 +108,28 @@ class PaymentView extends StatelessView<Payments, PaymentController> {
     );
   }
 
-   submitPayment(context) {
-    if (state.formKey.currentState!.validate()) {
-      final payment = Payment(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        studentId: '1',
-        //widget.student.id,
-        amount: double.parse(state.amountController.text),
-        paymentDate: DateTime.now(),
-        isInstallment: state.isInstallment,
-        notes: state.notes.isNotEmpty ? state.notes : null,
-      );
+  void submitPayment(BuildContext context) {
+    final formState = state.formKey.currentState;
+    if (formState != null && formState.validate()) {
+      try {
+        final payment = Payment(
+          id: DateTime.now().millisecondsSinceEpoch.toString(),
+          studentId: widget.student.id,
+          amount: double.parse(state.amountController.text),
+          paymentDate: DateTime.now(),
+          isInstallment: state.isInstallment,
+          notes: state.notes.trim().isNotEmpty ? state.notes.trim() : null,
+        );
 
-      widget.onPaymentSuccess(payment);
-      Navigator.pop(context);
+        widget.onPaymentSuccess(payment);
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+      } catch (e) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text('Error processing payment: $e')));
+      }
     }
   }
 }
