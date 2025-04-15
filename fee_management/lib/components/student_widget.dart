@@ -173,7 +173,6 @@ class StudentCard extends StatelessWidget {
   }
 }
 
-// Helper widget for information chips
 class _InfoChip extends StatelessWidget {
   final IconData icon;
   final String text;
