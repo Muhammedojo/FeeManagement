@@ -7,18 +7,25 @@ class Auth {
 
   Stream<User?> get authStateChanges => _auth.authStateChanges();
 
-  Future<void> signInWithEmailAndPassword(
+  Future<UserCredential> signInWithEmailAndPassword(
     String email,
     String password,
   ) async {
-    await _auth.signInWithEmailAndPassword(email: email, password: password);
+    try {
+     return await _auth.signInWithEmailAndPassword(email: email, password: password);
+    } on FirebaseAuthException {
+      rethrow;
+    }
   }
 
   Future<void> createUserWithEmailAndPassword(
     String email,
     String password,
   ) async {
-    await _auth.createUserWithEmailAndPassword(email: email, password: password);
+    await _auth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
   }
 
   Future<void> signOut() async {

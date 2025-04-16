@@ -94,7 +94,7 @@ class RegisterView extends StatelessView<Register, RegisterController> {
                               state.obscurePassword ? Icons.visibility_off : Icons.visibility,
                             ),
                             onPressed: () {
-                            
+                            state.togglePasswordVisibility();
                             },
                           ),
                           border: OutlineInputBorder(
@@ -134,7 +134,7 @@ class RegisterView extends StatelessView<Register, RegisterController> {
                               state.obscureConfirmPassword ? Icons.visibility_off : Icons.visibility,
                             ),
                             onPressed: () {
-                            
+                            state.toggleConfirmPasswordVisibility();
                             },
                           ),
                           border: OutlineInputBorder(

@@ -1,8 +1,5 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-
-import '../model/fee_structure.dart';
-import '../model/student.dart';
 import '../screen_views/login.dart';
 import '../utils/auth.dart';
 import '../utils/helper.dart';
@@ -50,80 +47,76 @@ class LoginController extends State<Login> {
     }
   }
 
-Future<void> login() async {
-
-  if (!formKey.currentState!.validate()) {
-    return;
+  togglePasswordVisibility() {
+    setState(() {
+      obscureText = !obscureText;
+    });
   }
+  
 
-  try {
-   
+  Future<void> login() async {
+    if (!formKey.currentState!.validate()) {
+      return;
+    }
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) => const Center(child: CircularProgressIndicator()),
     );
 
-  
-    UserCredential userCredential = await FirebaseAuth.instance
-        .signInWithEmailAndPassword(
-          email: emailController.text.trim(),
-          password: passwordController.text.trim(),
-        );
+    try {
+      UserCredential userCredential = await Auth().signInWithEmailAndPassword(
+        emailController.text.trim(),
+        passwordController.text.trim(),
+      );
+      if (!mounted) return;
+      Navigator.of(context).pop();
 
-  
-    Navigator.of(context).pop();
+      if (userCredential.user != null) {
+        Helper().showBasicSnackBar(context, 'Login successful');
 
-    if (userCredential.user != null) {
+        completeLogin();
+      }
+    } on FirebaseAuthException catch (e) {
+      Navigator.of(context).pop();
 
-      Helper().showBasicSnackBar(context, 'Login successful');
-      
-   completeLogin();
+      switch (e.code) {
+        case 'user-not-found':
+          Helper().showBasicSnackBar(context, 'No user found with this email');
+          break;
+        case 'wrong-password':
+          Helper().showBasicSnackBar(context, 'Incorrect password');
+          break;
+        case 'invalid-email':
+          Helper().showBasicSnackBar(context, 'Email is invalid');
+          break;
+        case 'user-disabled':
+          Helper().showBasicSnackBar(context, 'This account has been disabled');
+          break;
+        case 'too-many-requests':
+          Helper().showBasicSnackBar(
+            context,
+            'Too many attempts. Try again later',
+          );
+          break;
+        default:
+          Helper().showBasicSnackBar(context, e.message ?? 'Login failed');
+      }
+    } catch (e) {
+      Navigator.of(context).pop();
+
+      Helper().showBasicSnackBar(context, 'An error occurred: $e');
     }
-  } on FirebaseAuthException catch (e) {
-
-    Navigator.of(context).pop();
-
-  
-    switch (e.code) {
-      case 'user-not-found':
-        Helper().showBasicSnackBar(context, 'No user found with this email');
-        break;
-      case 'wrong-password':
-        Helper().showBasicSnackBar(context, 'Incorrect password');
-        break;
-      case 'invalid-email':
-        Helper().showBasicSnackBar(context, 'Email is invalid');
-        break;
-      case 'user-disabled':
-        Helper().showBasicSnackBar(context, 'This account has been disabled');
-        break;
-      case 'too-many-requests':
-        Helper().showBasicSnackBar(context, 'Too many attempts. Try again later');
-        break;
-      default:
-        Helper().showBasicSnackBar(
-          context,
-          e.message ?? 'Login failed',
-        );
-    }
-  } catch (e) {
-    
-    Navigator.of(context).pop();
-
-   
-    Helper().showBasicSnackBar(context, 'An error occurred: $e');
   }
-}
 
   void completeLogin() {
-  Navigator.pushReplacement<void, void>(
-    context,
-    MaterialPageRoute<void>(
-      builder: (BuildContext context) => const Dashboard(),
-    ),
-  );
-}
+    Navigator.pushReplacement<void, void>(
+      context,
+      MaterialPageRoute<void>(
+        builder: (BuildContext context) => const Dashboard(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) => LoginView(this);

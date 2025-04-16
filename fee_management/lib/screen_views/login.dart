@@ -93,7 +93,9 @@ class LoginView extends StatelessView<Login, LoginController> {
                                 ? Icons.visibility_off
                                 : Icons.visibility,
                           ),
-                          onPressed: () {},
+                          onPressed: () {
+                            state.togglePasswordVisibility();
+                          },
                         ),
                         border: OutlineInputBorder(
                           borderRadius: BorderRadius.circular(12),

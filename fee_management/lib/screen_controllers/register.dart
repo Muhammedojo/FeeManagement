@@ -72,7 +72,7 @@ class RegisterController extends State<Register> {
             email: emailController.text.trim(),
             password: passwordController.text.trim(),
           );
-
+ if (!mounted) return;
       Navigator.of(context).pop();
 
       if (userCredential.user != null) {
@@ -107,6 +107,19 @@ class RegisterController extends State<Register> {
       }
     }
   }
+
+togglePasswordVisibility() {
+    setState(() {
+      obscurePassword = !obscurePassword;
+    });
+  }
+
+  toggleConfirmPasswordVisibility() {
+    setState(() {
+      obscureConfirmPassword = !obscureConfirmPassword;
+    });
+  }
+
   void completeLogin() {
   Navigator.pushReplacement<void, void>(
     context,
