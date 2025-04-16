@@ -1,3 +1,5 @@
+import 'package:fee_management/screen_controllers/login.dart' show Login;
+import 'package:fee_management/utils/auth.dart';
 import 'package:flutter/material.dart';
 
 import '../model/fee_structure.dart';
@@ -46,6 +48,16 @@ class DashboardController extends State<Dashboard> {
   @override
   void dispose() {
     super.dispose();
+  }
+
+  signOut(){
+    Auth().signOut();
+    Navigator.pushReplacement<void, void>(
+    context,
+    MaterialPageRoute<void>(
+      builder: (BuildContext context) => const Login(),
+    ),
+  );
   }
 
   @override

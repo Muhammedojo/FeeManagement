@@ -1,5 +1,6 @@
 import 'package:fee_management/firebase_options.dart';
 import 'package:fee_management/screen_controllers/dashboard_controller.dart';
+import 'package:fee_management/screen_controllers/login.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -20,7 +21,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
        colorScheme: ColorScheme.fromSeed(seedColor: Colors.greenAccent),
       ),
-      home: const Dashboard(),
+      home: const Login(),
         debugShowCheckedModeBanner: false,
     );
   }
