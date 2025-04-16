@@ -22,7 +22,7 @@ class DashboardView extends StatelessView<Dashboard, DashboardController> {
         ),
         actions: [
           IconButton(
-            icon: const Icon(Icons.more_vert, color: Colors.black87),
+            icon: const Icon(Icons.logout_rounded, color: Colors.redAccent),
             onPressed: () {state.signOut();},
           ),
         ],
